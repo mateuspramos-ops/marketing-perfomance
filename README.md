@@ -17,29 +17,34 @@ O dashboard busca os dados em `GET /api/performance`, que por sua vez lê um CSV
 
 ### 1. Criar a planilha
 
-Crie uma planilha no Google Sheets com estas colunas na primeira linha (nomes exatos, minúsculo):
+Crie uma planilha no Google Sheets com uma coluna de cabeçalho por campo. Os nomes podem ter acentos/maiúsculas normalmente — o dashboard normaliza tudo (`Mês`, `Em Dia`, `Meta%` etc. são reconhecidos automaticamente):
 
-| mes     | ano  | colaborador      | cargo    | cliente | em_dia | atraso | meta |
+| Mês     | Ano  | Colaborador      | Cargo    | Cliente | Em Dia | Atraso | Meta |
 | ------- | ---- | ---------------- | -------- | ------- | ------ | ------ | ---- |
 | Janeiro | 2026 | Carolina Brandão | Designer | Geral   | 31     | 4      | 70   |
 
-- `mes`: nome do mês por extenso (Janeiro, Fevereiro, ...).
-- `cliente` e `meta` são opcionais — se vazios, assume `"Geral"` e `70` respectivamente.
-- O total de atividades, a performance % e o GAP são calculados automaticamente a partir de `em_dia` e `atraso` — a cliente não precisa preencher essas colunas.
+- `Mês`: nome do mês por extenso (Janeiro, Fevereiro, ...).
+- `Cliente` e `Meta` são opcionais — se vazios, assume `"Geral"` e `70` respectivamente.
+- Total de atividades, performance % e GAP são calculados automaticamente a partir de `Em Dia`/`Atraso` — não precisa preenchê-los (se a planilha já tiver essas colunas, elas são ignoradas).
 - Uma linha por colaborador/mês.
 
-### 2. Publicar como CSV
+### 2. Deixar o CSV acessível publicamente
 
-Na planilha: **Arquivo → Compartilhar → Publicar na Web**. Selecione a aba correta, escolha o formato **CSV** e clique em **Publicar**. Copie o link gerado (algo como `https://docs.google.com/spreadsheets/d/e/.../pub?output=csv`).
+Duas formas, ambas geram uma URL usável em `GOOGLE_SHEET_CSV_URL`:
 
-> Isso torna a planilha legível por qualquer pessoa com o link — consistente com o dashboard não ter login. Se os dados forem sensíveis, use login (ver abaixo) em vez de publicar a planilha.
+- **Link de compartilhamento** (mais simples): clique em **Compartilhar**, ative "Qualquer pessoa com o link" como Leitor, e monte a URL assim:
+  `https://docs.google.com/spreadsheets/d/SEU_ID_DA_PLANILHA/export?format=csv&gid=0`
+  (troque `SEU_ID_DA_PLANILHA` pelo trecho entre `/d/` e `/edit` do link de compartilhamento; `gid=0` é a primeira aba).
+- **Publicar na Web** (mais formal/estável): **Arquivo → Compartilhar → Publicar na Web**, formato **CSV**, gera um link `.../pub?output=csv`.
+
+> Qualquer uma das duas torna a planilha legível por quem tiver o link — consistente com o dashboard não ter login. Se os dados forem sensíveis, use autenticação em vez disso.
 
 ### 3. Configurar a variável de ambiente
 
 Copie `.env.example` para `.env.local` e cole a URL:
 
 ```bash
-GOOGLE_SHEET_CSV_URL="https://docs.google.com/spreadsheets/d/e/SEU_ID/pub?output=csv"
+GOOGLE_SHEET_CSV_URL="https://docs.google.com/spreadsheets/d/SEU_ID/export?format=csv&gid=0"
 ```
 
 Reinicie `npm run dev`. O aviso amarelo deve sumir e os dados da planilha aparecem no lugar dos de demonstração.

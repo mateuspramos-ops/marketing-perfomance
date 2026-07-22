@@ -44,12 +44,30 @@ export function parseCsv(text: string): string[][] {
   return rows;
 }
 
+function looksLikeHeaderRow(row: string[]): boolean {
+  return row.some((cell) => cell.trim().toLowerCase() === "colaborador");
+}
+
+// Normalizes a header cell into a stable ascii key: "Em Dia" -> "em_dia", "Meta%" -> "meta".
+function normalizeHeader(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
 export function csvToObjects(text: string): Record<string, string>[] {
   const rows = parseCsv(text);
   if (rows.length === 0) return [];
 
-  const headers = rows[0].map((h) => h.trim().toLowerCase());
-  return rows.slice(1).map((row) => {
+  // Sheets may include a title row above the real header (e.g. "Geral colaboradores").
+  const headerIndex = rows.findIndex(looksLikeHeaderRow);
+  if (headerIndex === -1) return [];
+
+  const headers = rows[headerIndex].map(normalizeHeader);
+  return rows.slice(headerIndex + 1).map((row) => {
     const obj: Record<string, string> = {};
     headers.forEach((header, i) => {
       obj[header] = (row[i] ?? "").trim();

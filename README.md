@@ -59,20 +59,9 @@ Os dados são recarregados automaticamente a cada 60 segundos no navegador (e o 
 4. Deploy. A cada `git push` na branch principal, a Vercel publica a versão nova automaticamente.
 5. Compartilhe a URL gerada (ou configure um domínio próprio em **Settings → Domains**) com a cliente.
 
-## Abas adicionais da planilha
+## Aba adicional da planilha
 
-O dashboard lê mais duas abas da mesma planilha. Por padrão, cada página deriva a URL a partir de `GOOGLE_SHEET_CSV_URL`, apenas trocando o `gid` — então não é preciso configurar nada extra. Se o `gid` da sua aba for diferente, dá pra sobrescrever com a variável indicada.
-
-### Produtividade (por colaborador)
-
-Página **Produtividade** — volume de trabalho e horas por colaborador:
-
-```
-Mês, Ano, Colaborador, Qtd_Clientes, Qtd_Projetos, Qtd_Atividades, Qtd_Etapas, Total_Horas_HHMM
-```
-
-- `Total_Horas_HHMM`: horas acumuladas no formato `HH:MM:SS` (ex.: `90:58:00`). O dashboard converte e soma automaticamente.
-- Override opcional: `GOOGLE_SHEET_PRODUCTIVITY_CSV_URL`.
+Além da aba principal, o dashboard lê a aba "projeto por cliente". Por padrão, a página deriva a URL a partir de `GOOGLE_SHEET_CSV_URL`, apenas trocando o `gid` — então não é preciso configurar nada extra. Se o `gid` da sua aba for diferente, dá pra sobrescrever com a variável indicada.
 
 ### Projetos por Cliente
 
@@ -82,13 +71,12 @@ Página **Clientes** — volume de trabalho e horas dedicadas a cada cliente:
 Mês, Ano, Cliente, Projetos, Atividades, Etapas, Total de tempo
 ```
 
-- `Total de tempo`: mesmo formato `HH:MM:SS`.
+- `Total de tempo`: horas acumuladas no formato `HH:MM:SS` (ex.: `81:11:35`). O dashboard converte e soma automaticamente.
 - Override opcional: `GOOGLE_SHEET_CLIENTS_CSV_URL`.
 
 ## Estrutura
 
 - `src/app/page.tsx` — painel geral (KPIs, gráficos, tabela do time).
-- `src/app/produtividade/page.tsx` — volume de trabalho e horas por colaborador.
 - `src/app/clientes/page.tsx` — projetos, atividades e horas por cliente.
 - `src/app/colaborador/page.tsx` — perfil individual de colaborador.
 - `src/app/relatorio/page.tsx` — ficha de avaliação para impressão/PDF.

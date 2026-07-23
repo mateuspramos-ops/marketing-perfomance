@@ -9,7 +9,6 @@ import {
   Users,
   FileText,
   Sparkles,
-  Clock,
   Building2,
 } from "lucide-react";
 
@@ -18,11 +17,6 @@ const navItems = [
     label: "Dashboard",
     href: "/",
     icon: LayoutDashboard,
-  },
-  {
-    label: "Produtividade",
-    href: "/produtividade",
-    icon: Clock,
   },
   {
     label: "Clientes",

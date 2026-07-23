@@ -59,22 +59,39 @@ Os dados são recarregados automaticamente a cada 60 segundos no navegador (e o 
 4. Deploy. A cada `git push` na branch principal, a Vercel publica a versão nova automaticamente.
 5. Compartilhe a URL gerada (ou configure um domínio próprio em **Settings → Domains**) com a cliente.
 
-## Aba de Produtividade (segunda aba da planilha)
+## Abas adicionais da planilha
 
-A página **Produtividade** usa uma segunda aba da planilha, com métricas de volume de trabalho e horas:
+O dashboard lê mais duas abas da mesma planilha. Por padrão, cada página deriva a URL a partir de `GOOGLE_SHEET_CSV_URL`, apenas trocando o `gid` — então não é preciso configurar nada extra. Se o `gid` da sua aba for diferente, dá pra sobrescrever com a variável indicada.
+
+### Produtividade (por colaborador)
+
+Página **Produtividade** — volume de trabalho e horas por colaborador:
 
 ```
 Mês, Ano, Colaborador, Qtd_Clientes, Qtd_Projetos, Qtd_Atividades, Qtd_Etapas, Total_Horas_HHMM
 ```
 
 - `Total_Horas_HHMM`: horas acumuladas no formato `HH:MM:SS` (ex.: `90:58:00`). O dashboard converte e soma automaticamente.
-- Por padrão, essa página lê a mesma planilha do `GOOGLE_SHEET_CSV_URL`, apenas trocando o `gid` para a aba de produtividade. Se sua aba tiver outro `gid`, defina `GOOGLE_SHEET_PRODUCTIVITY_CSV_URL` com a URL CSV dela (mesmo esquema `.../export?format=csv&gid=SEU_GID`).
+- Override opcional: `GOOGLE_SHEET_PRODUCTIVITY_CSV_URL`.
+
+### Projetos por Cliente
+
+Página **Clientes** — volume de trabalho e horas dedicadas a cada cliente:
+
+```
+Mês, Ano, Cliente, Projetos, Atividades, Etapas, Total de tempo
+```
+
+- `Total de tempo`: mesmo formato `HH:MM:SS`.
+- Override opcional: `GOOGLE_SHEET_CLIENTS_CSV_URL`.
 
 ## Estrutura
 
 - `src/app/page.tsx` — painel geral (KPIs, gráficos, tabela do time).
 - `src/app/produtividade/page.tsx` — volume de trabalho e horas por colaborador.
+- `src/app/clientes/page.tsx` — projetos, atividades e horas por cliente.
 - `src/app/colaborador/page.tsx` — perfil individual de colaborador.
 - `src/app/relatorio/page.tsx` — ficha de avaliação para impressão/PDF.
-- `src/app/api/performance/route.ts` e `src/app/api/productivity/route.ts` — leem e normalizam os dados das duas abas da planilha.
-- `src/lib/sheet-source.ts` / `src/lib/productivity-source.ts` — parsing do CSV e fallback para dados de demonstração.
+- `src/app/api/*/route.ts` — leem e normalizam os dados das abas da planilha.
+- `src/lib/*-source.ts` — parsing do CSV e fallback para dados de demonstração.
+- `src/lib/horas.ts` — conversão do formato de horas `HH:MM:SS`.

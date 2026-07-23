@@ -1,13 +1,11 @@
-import { ProductivityData } from "@/types";
+import { ClientProjectData } from "@/types";
 import { csvToObjects } from "@/lib/csv";
 import { parseHoras } from "@/lib/horas";
-import { productivityData as mockData } from "@/data/mock";
+import { clientProjectData as mockData } from "@/data/mock";
 
-export { formatHoras } from "@/lib/horas";
-
-// gid da aba de produtividade dentro da planilha. Usado apenas para derivar a URL
+// gid da aba "projeto por cliente" dentro da planilha. Usado apenas para derivar a URL
 // a partir de GOOGLE_SHEET_CSV_URL quando não há uma URL dedicada configurada.
-const PRODUCTIVITY_GID = "277737850";
+const CLIENTS_GID = "1456283243";
 
 function toInt(value: string | undefined): number {
   if (!value) return 0;
@@ -19,27 +17,28 @@ function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 
-export function rowsToProductivityData(rows: Record<string, string>[]): ProductivityData[] {
+// A aba usa "Cliente" como coluna-chave (não "Colaborador"), então a detecção de
+// cabeçalho padrão não se aplica — normalizamos e localizamos a linha pela coluna "cliente".
+export function rowsToClientData(rows: Record<string, string>[]): ClientProjectData[] {
   return rows
-    .filter((row) => row.colaborador && row.mes)
+    .filter((row) => row.cliente && row.mes)
     .map((row) => {
-      const { horas, label } = parseHoras(row.total_horas_hhmm ?? row.total_horas);
+      const { horas, label } = parseHoras(row.total_de_tempo ?? row.total_horas);
       return {
         mes: capitalize(row.mes.trim()),
         ano: toInt(row.ano) || new Date().getFullYear(),
-        colaborador: row.colaborador.trim(),
-        qtdClientes: toInt(row.qtd_clientes),
-        qtdProjetos: toInt(row.qtd_projetos),
-        qtdAtividades: toInt(row.qtd_atividades),
-        qtdEtapas: toInt(row.qtd_etapas),
+        cliente: row.cliente.trim(),
+        projetos: toInt(row.projetos),
+        atividades: toInt(row.atividades),
+        etapas: toInt(row.etapas),
         totalHoras: horas,
         totalHorasLabel: label,
       };
     });
 }
 
-function resolveProductivityUrl(): string | null {
-  const dedicated = process.env.GOOGLE_SHEET_PRODUCTIVITY_CSV_URL;
+function resolveClientsUrl(): string | null {
+  const dedicated = process.env.GOOGLE_SHEET_CLIENTS_CSV_URL;
   if (dedicated) return dedicated;
 
   const base = process.env.GOOGLE_SHEET_CSV_URL;
@@ -47,22 +46,22 @@ function resolveProductivityUrl(): string | null {
 
   try {
     const url = new URL(base);
-    url.searchParams.set("gid", PRODUCTIVITY_GID);
+    url.searchParams.set("gid", CLIENTS_GID);
     return url.toString();
   } catch {
     return null;
   }
 }
 
-export interface ProductivitySource {
-  data: ProductivityData[];
+export interface ClientSource {
+  data: ClientProjectData[];
   isDemo: boolean;
   error: string | null;
   fetchedAt: string;
 }
 
-export async function loadProductivityData(): Promise<ProductivitySource> {
-  const sheetUrl = resolveProductivityUrl();
+export async function loadClientData(): Promise<ClientSource> {
+  const sheetUrl = resolveClientsUrl();
 
   if (!sheetUrl) {
     return {
@@ -79,11 +78,11 @@ export async function loadProductivityData(): Promise<ProductivitySource> {
       throw new Error(`Planilha respondeu com status ${res.status}`);
     }
     const text = await res.text();
-    const rows = csvToObjects(text);
-    const data = rowsToProductivityData(rows);
+    const rows = csvToObjects(text, "cliente");
+    const data = rowsToClientData(rows);
 
     if (data.length === 0) {
-      throw new Error("A aba de produtividade foi lida, mas nenhuma linha válida foi encontrada.");
+      throw new Error("A aba de clientes foi lida, mas nenhuma linha válida foi encontrada.");
     }
 
     return {
@@ -96,7 +95,7 @@ export async function loadProductivityData(): Promise<ProductivitySource> {
     return {
       data: mockData,
       isDemo: true,
-      error: err instanceof Error ? err.message : "Erro ao carregar a aba de produtividade.",
+      error: err instanceof Error ? err.message : "Erro ao carregar a aba de clientes.",
       fetchedAt: new Date().toISOString(),
     };
   }

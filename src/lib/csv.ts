@@ -44,8 +44,8 @@ export function parseCsv(text: string): string[][] {
   return rows;
 }
 
-function looksLikeHeaderRow(row: string[]): boolean {
-  return row.some((cell) => cell.trim().toLowerCase() === "colaborador");
+function looksLikeHeaderRow(row: string[], keyColumn: string): boolean {
+  return row.some((cell) => cell.trim().toLowerCase() === keyColumn);
 }
 
 // Normalizes a header cell into a stable ascii key: "Em Dia" -> "em_dia", "Meta%" -> "meta".
@@ -58,12 +58,16 @@ function normalizeHeader(value: string): string {
     .replace(/^_+|_+$/g, "");
 }
 
-export function csvToObjects(text: string): Record<string, string>[] {
+// keyColumn is the header cell that identifies the real header row (e.g. "colaborador"
+// or "cliente"), used to skip any title row a sheet may place above the header.
+export function csvToObjects(
+  text: string,
+  keyColumn = "colaborador"
+): Record<string, string>[] {
   const rows = parseCsv(text);
   if (rows.length === 0) return [];
 
-  // Sheets may include a title row above the real header (e.g. "Geral colaboradores").
-  const headerIndex = rows.findIndex(looksLikeHeaderRow);
+  const headerIndex = rows.findIndex((row) => looksLikeHeaderRow(row, keyColumn));
   if (headerIndex === -1) return [];
 
   const headers = rows[headerIndex].map(normalizeHeader);

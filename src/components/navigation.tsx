@@ -10,6 +10,7 @@ import {
   FileText,
   Sparkles,
   Clock,
+  Building2,
 } from "lucide-react";
 
 const navItems = [
@@ -22,6 +23,11 @@ const navItems = [
     label: "Produtividade",
     href: "/produtividade",
     icon: Clock,
+  },
+  {
+    label: "Clientes",
+    href: "/clientes",
+    icon: Building2,
   },
   {
     label: "Colaborador",

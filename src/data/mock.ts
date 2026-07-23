@@ -1,4 +1,4 @@
-import { PerformanceData, ProductivityData } from "@/types";
+import { PerformanceData, ProductivityData, ClientProjectData } from "@/types";
 
 export const performanceData: PerformanceData[] = [
   // Janeiro 2026
@@ -65,4 +65,43 @@ export const productivityData: ProductivityData[] = [
   { mes: "Junho", ano: 2026, colaborador: "Raphael Silva", qtdClientes: 5, qtdProjetos: 9, qtdAtividades: 39, qtdEtapas: 114, totalHoras: 57.78, totalHorasLabel: "57h47" },
   { mes: "Junho", ano: 2026, colaborador: "JP Pretti", qtdClientes: 4, qtdProjetos: 9, qtdAtividades: 36, qtdEtapas: 74, totalHoras: 42.22, totalHorasLabel: "42h13" },
   { mes: "Junho", ano: 2026, colaborador: "Fernanda Sinfronio", qtdClientes: 5, qtdProjetos: 15, qtdAtividades: 24, qtdEtapas: 27, totalHoras: 59.17, totalHorasLabel: "59h10" },
+];
+
+// Dados de demonstração para a página de Clientes (aba "projeto por cliente").
+export const clientProjectData: ClientProjectData[] = [
+  { mes: "Janeiro", ano: 2026, cliente: "LOGA INTERNET", projetos: 14, atividades: 48, etapas: 163, totalHoras: 81.19, totalHorasLabel: "81h11" },
+  { mes: "Janeiro", ano: 2026, cliente: "AT3 INTERNET", projetos: 5, atividades: 12, etapas: 27, totalHoras: 22.16, totalHorasLabel: "22h09" },
+  { mes: "Janeiro", ano: 2026, cliente: "JNNET", projetos: 3, atividades: 6, etapas: 19, totalHoras: 23.47, totalHorasLabel: "23h28" },
+  { mes: "Janeiro", ano: 2026, cliente: "NETSUL", projetos: 3, atividades: 6, etapas: 15, totalHoras: 2.73, totalHorasLabel: "2h44" },
+  { mes: "Janeiro", ano: 2026, cliente: "GRUPO JAN", projetos: 2, atividades: 2, etapas: 6, totalHoras: 1.37, totalHorasLabel: "1h22" },
+  { mes: "Fevereiro", ano: 2026, cliente: "LOGA INTERNET", projetos: 17, atividades: 55, etapas: 198, totalHoras: 152.82, totalHorasLabel: "152h48" },
+  { mes: "Fevereiro", ano: 2026, cliente: "AT3 INTERNET", projetos: 6, atividades: 20, etapas: 51, totalHoras: 47.47, totalHorasLabel: "47h28" },
+  { mes: "Fevereiro", ano: 2026, cliente: "NETSUL", projetos: 2, atividades: 8, etapas: 15, totalHoras: 12.24, totalHorasLabel: "12h14" },
+  { mes: "Fevereiro", ano: 2026, cliente: "JNNET", projetos: 3, atividades: 5, etapas: 5, totalHoras: 8.58, totalHorasLabel: "8h34" },
+  { mes: "Fevereiro", ano: 2026, cliente: "GRUPO JAN", projetos: 3, atividades: 4, etapas: 12, totalHoras: 9.21, totalHorasLabel: "9h12" },
+  { mes: "Março", ano: 2026, cliente: "LOGA INTERNET", projetos: 14, atividades: 75, etapas: 254, totalHoras: 226.09, totalHorasLabel: "226h05" },
+  { mes: "Março", ano: 2026, cliente: "AT3 INTERNET", projetos: 3, atividades: 14, etapas: 40, totalHoras: 41.57, totalHorasLabel: "41h34" },
+  { mes: "Março", ano: 2026, cliente: "JNNET", projetos: 3, atividades: 4, etapas: 8, totalHoras: 11.51, totalHorasLabel: "11h30" },
+  { mes: "Março", ano: 2026, cliente: "NETSUL", projetos: 2, atividades: 10, etapas: 35, totalHoras: 40.28, totalHorasLabel: "40h16" },
+  { mes: "Março", ano: 2026, cliente: "ACERTA GESTÃO ESTRATÉGICA", projetos: 1, atividades: 1, etapas: 2, totalHoras: 4.21, totalHorasLabel: "4h12" },
+  { mes: "Março", ano: 2026, cliente: "GRUPO JAN", projetos: 1, atividades: 1, etapas: 1, totalHoras: 0.08, totalHorasLabel: "0h05" },
+  { mes: "Março", ano: 2026, cliente: "ACERTA-GHO", projetos: 1, atividades: 1, etapas: 3, totalHoras: 1.75, totalHorasLabel: "1h45" },
+  { mes: "Abril", ano: 2026, cliente: "LOGA INTERNET", projetos: 19, atividades: 114, etapas: 285, totalHoras: 298.23, totalHorasLabel: "298h13" },
+  { mes: "Abril", ano: 2026, cliente: "AT3 INTERNET", projetos: 8, atividades: 20, etapas: 69, totalHoras: 38.78, totalHorasLabel: "38h46" },
+  { mes: "Abril", ano: 2026, cliente: "ACERTA GESTÃO ESTRATÉGICA", projetos: 1, atividades: 6, etapas: 23, totalHoras: 13.04, totalHorasLabel: "13h02" },
+  { mes: "Abril", ano: 2026, cliente: "NETSUL", projetos: 4, atividades: 11, etapas: 41, totalHoras: 63.03, totalHorasLabel: "63h02" },
+  { mes: "Abril", ano: 2026, cliente: "JNNET", projetos: 4, atividades: 9, etapas: 30, totalHoras: 20.34, totalHorasLabel: "20h20" },
+  { mes: "Abril", ano: 2026, cliente: "ACERTA-GHO", projetos: 1, atividades: 1, etapas: 2, totalHoras: 1.67, totalHorasLabel: "1h40" },
+  { mes: "Maio", ano: 2026, cliente: "LOGA INTERNET", projetos: 12, atividades: 79, etapas: 220, totalHoras: 199.88, totalHorasLabel: "199h53" },
+  { mes: "Maio", ano: 2026, cliente: "ACERTA GESTÃO ESTRATÉGICA", projetos: 3, atividades: 11, etapas: 19, totalHoras: 16.32, totalHorasLabel: "16h19" },
+  { mes: "Maio", ano: 2026, cliente: "JNNET", projetos: 7, atividades: 17, etapas: 64, totalHoras: 87.83, totalHorasLabel: "87h49" },
+  { mes: "Maio", ano: 2026, cliente: "AT3 INTERNET", projetos: 4, atividades: 14, etapas: 62, totalHoras: 42.23, totalHorasLabel: "42h14" },
+  { mes: "Maio", ano: 2026, cliente: "NETSUL", projetos: 3, atividades: 15, etapas: 56, totalHoras: 43.83, totalHorasLabel: "43h49" },
+  { mes: "Maio", ano: 2026, cliente: "ACERTA-GHO", projetos: 1, atividades: 1, etapas: 1, totalHoras: 1, totalHorasLabel: "1h00" },
+  { mes: "Junho", ano: 2026, cliente: "LOGA INTERNET", projetos: 23, atividades: 71, etapas: 181, totalHoras: 167.41, totalHorasLabel: "167h24" },
+  { mes: "Junho", ano: 2026, cliente: "ACERTA GESTÃO ESTRATÉGICA", projetos: 5, atividades: 18, etapas: 44, totalHoras: 44.61, totalHorasLabel: "44h36" },
+  { mes: "Junho", ano: 2026, cliente: "AT3 INTERNET", projetos: 7, atividades: 30, etapas: 83, totalHoras: 93.65, totalHorasLabel: "93h38" },
+  { mes: "Junho", ano: 2026, cliente: "NETSUL", projetos: 6, atividades: 20, etapas: 64, totalHoras: 47.75, totalHorasLabel: "47h44" },
+  { mes: "Junho", ano: 2026, cliente: "JNNET", projetos: 7, atividades: 17, etapas: 65, totalHoras: 53.09, totalHorasLabel: "53h05" },
+  { mes: "Junho", ano: 2026, cliente: "ACERTA-GHO", projetos: 1, atividades: 2, etapas: 4, totalHoras: 0.36, totalHorasLabel: "0h21" },
 ];

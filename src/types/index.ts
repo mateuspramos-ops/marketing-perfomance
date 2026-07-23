@@ -49,3 +49,14 @@ export interface ProductivityData {
   totalHoras: number; // horas em decimal (ex.: 90.97)
   totalHorasLabel: string; // rótulo legível (ex.: "90h58")
 }
+
+export interface ClientProjectData {
+  mes: string;
+  ano: number;
+  cliente: string;
+  projetos: number;
+  atividades: number;
+  etapas: number;
+  totalHoras: number; // horas em decimal
+  totalHorasLabel: string; // rótulo legível (ex.: "81h11")
+}

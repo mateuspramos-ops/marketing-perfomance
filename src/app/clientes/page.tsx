@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   BarChart,
@@ -40,16 +41,23 @@ import {
   Loader2,
 } from "lucide-react";
 
-// Cores de marca por empresa (definidas pela cliente).
-const CLIENT_COLORS: { match: RegExp; color: string }[] = [
-  { match: /loga/i, color: "#F59E0B" }, // laranja
-  { match: /at3/i, color: "#3B82F6" }, // azul
-  { match: /jnnet/i, color: "#15803D" }, // verde escuro
-  { match: /netsul/i, color: "#22C55E" }, // verde claro
-  { match: /acerta/i, color: "#1E3A8A" }, // azul escuro
+// Marca por empresa: cor (barras/fallback), logo e cor de fundo do logo.
+interface ClientBrand {
+  match: RegExp;
+  color: string;
+  logo?: string;
+  logoBg?: string;
+}
+
+const CLIENT_BRANDS: ClientBrand[] = [
+  { match: /loga/i, color: "#F59E0B", logo: "/logos/loga.png", logoBg: "#14294f" }, // laranja
+  { match: /at3/i, color: "#3B82F6", logo: "/logos/at3.png", logoBg: "#ffffff" }, // azul
+  { match: /jnnet/i, color: "#15803D", logo: "/logos/jnnet.png", logoBg: "#ffffff" }, // verde escuro
+  { match: /netsul/i, color: "#22C55E", logo: "/logos/netsul.png", logoBg: "#000000" }, // verde claro
+  { match: /acerta/i, color: "#1E3A8A" }, // azul escuro (sem logo)
 ];
 
-// Cores para clientes sem cor de marca definida (ex.: Grupo Jan).
+// Cores para clientes sem marca definida (ex.: Grupo Jan).
 const FALLBACK_COLORS = ["#8b5cf6", "#ec4899", "#6366f1", "#0ea5e9", "#14b8a6"];
 
 function hashIndex(name: string, mod: number) {
@@ -58,10 +66,17 @@ function hashIndex(name: string, mod: number) {
   return hash % mod;
 }
 
+function getClientBrand(name: string): ClientBrand {
+  return (
+    CLIENT_BRANDS.find((c) => c.match.test(name)) ?? {
+      match: /./,
+      color: FALLBACK_COLORS[hashIndex(name, FALLBACK_COLORS.length)],
+    }
+  );
+}
+
 function getClientColor(name: string): string {
-  const found = CLIENT_COLORS.find((c) => c.match.test(name));
-  if (found) return found.color;
-  return FALLBACK_COLORS[hashIndex(name, FALLBACK_COLORS.length)];
+  return getClientBrand(name).color;
 }
 
 function getInitials(name: string) {
@@ -365,6 +380,7 @@ export default function ClientsPage() {
                     </thead>
                     <tbody>
                       {porCliente.map((c, i) => {
+                        const brand = getClientBrand(c.cliente);
                         return (
                           <motion.tr
                             key={c.cliente}
@@ -375,12 +391,27 @@ export default function ClientsPage() {
                           >
                             <td className="py-3 px-4 font-medium">
                               <div className="flex items-center gap-3">
-                                <div
-                                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-semibold text-white shadow-sm"
-                                  style={{ backgroundColor: getClientColor(c.cliente) }}
-                                >
-                                  {getInitials(c.cliente)}
-                                </div>
+                                {brand.logo ? (
+                                  <div
+                                    className="flex h-9 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg p-1 ring-1 ring-foreground/10 shadow-sm"
+                                    style={{ backgroundColor: brand.logoBg }}
+                                  >
+                                    <Image
+                                      src={brand.logo}
+                                      alt={c.cliente}
+                                      width={64}
+                                      height={36}
+                                      className="max-h-full max-w-full object-contain"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div
+                                    className="flex h-9 w-16 shrink-0 items-center justify-center rounded-lg text-[11px] font-semibold text-white shadow-sm"
+                                    style={{ backgroundColor: brand.color }}
+                                  >
+                                    {getInitials(c.cliente)}
+                                  </div>
+                                )}
                                 <span>{c.cliente}</span>
                               </div>
                             </td>

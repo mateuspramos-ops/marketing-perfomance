@@ -31,7 +31,6 @@ import { DataStatusBanner } from "@/components/data-status-banner";
 import { useClientData } from "@/hooks/use-client-data";
 import { formatHoras } from "@/lib/horas";
 import { getAllMonths, formatNumber } from "@/lib/data-service";
-import { cn } from "@/lib/utils";
 import {
   Building2,
   FolderKanban,
@@ -41,27 +40,33 @@ import {
   Loader2,
 } from "lucide-react";
 
-const CLIENT_GRADIENTS = [
-  "from-violet-500 to-fuchsia-500",
-  "from-blue-500 to-cyan-400",
-  "from-emerald-500 to-teal-400",
-  "from-amber-500 to-orange-500",
-  "from-rose-500 to-pink-500",
-  "from-indigo-500 to-purple-500",
-  "from-sky-500 to-blue-500",
+// Cores de marca por empresa (definidas pela cliente).
+const CLIENT_COLORS: { match: RegExp; color: string }[] = [
+  { match: /loga/i, color: "#F59E0B" }, // laranja
+  { match: /at3/i, color: "#3B82F6" }, // azul
+  { match: /jnnet/i, color: "#15803D" }, // verde escuro
+  { match: /netsul/i, color: "#22C55E" }, // verde claro
+  { match: /acerta/i, color: "#1E3A8A" }, // azul escuro
 ];
 
-const BAR_COLORS = ["#8b5cf6", "#3b82f6", "#10b981", "#f59e0b", "#ec4899", "#6366f1", "#0ea5e9"];
-
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/);
-  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
-}
+// Cores para clientes sem cor de marca definida (ex.: Grupo Jan).
+const FALLBACK_COLORS = ["#8b5cf6", "#ec4899", "#6366f1", "#0ea5e9", "#14b8a6"];
 
 function hashIndex(name: string, mod: number) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
   return hash % mod;
+}
+
+function getClientColor(name: string): string {
+  const found = CLIENT_COLORS.find((c) => c.match.test(name));
+  if (found) return found.color;
+  return FALLBACK_COLORS[hashIndex(name, FALLBACK_COLORS.length)];
+}
+
+function getInitials(name: string) {
+  const parts = name.trim().split(/\s+/);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
 }
 
 export default function ClientsPage() {
@@ -297,8 +302,8 @@ export default function ClientsPage() {
                       />
                       <Tooltip content={<HorasTooltip />} cursor={{ className: "fill-foreground/5" }} />
                       <Bar dataKey="horas" name="Horas" radius={[0, 6, 6, 0]} animationDuration={800}>
-                        {porCliente.map((entry, i) => (
-                          <Cell key={entry.cliente} fill={BAR_COLORS[i % BAR_COLORS.length]} />
+                        {porCliente.map((entry) => (
+                          <Cell key={entry.cliente} fill={getClientColor(entry.cliente)} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -360,7 +365,6 @@ export default function ClientsPage() {
                     </thead>
                     <tbody>
                       {porCliente.map((c, i) => {
-                        const gradient = CLIENT_GRADIENTS[hashIndex(c.cliente, CLIENT_GRADIENTS.length)];
                         return (
                           <motion.tr
                             key={c.cliente}
@@ -372,10 +376,8 @@ export default function ClientsPage() {
                             <td className="py-3 px-4 font-medium">
                               <div className="flex items-center gap-3">
                                 <div
-                                  className={cn(
-                                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-[11px] font-semibold text-white shadow-sm",
-                                    gradient
-                                  )}
+                                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-semibold text-white shadow-sm"
+                                  style={{ backgroundColor: getClientColor(c.cliente) }}
                                 >
                                   {getInitials(c.cliente)}
                                 </div>

@@ -45,6 +45,7 @@ import {
   getCollaboratorData,
   getAllCollaborators,
   getAllYears,
+  getAllMonths,
   formatPercent,
   formatNumber,
 } from "@/lib/data-service";
@@ -54,9 +55,11 @@ export default function CollaboratorPage() {
   const { data, isDemo, error, loading, refresh } = usePerformanceData();
   const [selectedCollaborator, setSelectedCollaborator] = useState("");
   const [selectedYear, setSelectedYear] = useState<number>(2026);
+  const [selectedMonth, setSelectedMonth] = useState("");
 
   const collaborators = useMemo(() => getAllCollaborators(data), [data]);
   const years = useMemo(() => getAllYears(data), [data]);
+  const months = getAllMonths();
 
   useEffect(() => {
     if (years.length > 0 && !years.includes(selectedYear)) {
@@ -69,6 +72,13 @@ export default function CollaboratorPage() {
     if (!selectedCollaborator) return null;
     return getCollaboratorData(data, selectedCollaborator, selectedYear);
   }, [data, selectedCollaborator, selectedYear]);
+
+  // Quando um mês está selecionado, os KPIs mostram os números daquele mês;
+  // caso contrário, mostram o acumulado anual.
+  const monthData = useMemo(() => {
+    if (!collaboratorData || !selectedMonth) return null;
+    return collaboratorData.dadosMensais.find((d) => d.mes === selectedMonth) ?? null;
+  }, [collaboratorData, selectedMonth]);
 
   const lineChartData = useMemo(() => {
     if (!collaboratorData) return [];
@@ -162,6 +172,25 @@ export default function CollaboratorPage() {
                     </Select>
 
                     <Select
+                      value={selectedMonth || "all"}
+                      onValueChange={(value) =>
+                        setSelectedMonth(value === "all" || value === null ? "" : value)
+                      }
+                    >
+                      <SelectTrigger className="w-[150px]">
+                        <SelectValue placeholder="Mês" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos os Meses</SelectItem>
+                        {months.map((month) => (
+                          <SelectItem key={month} value={month}>
+                            {month}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Select
                       value={selectedYear.toString()}
                       onValueChange={(value) => setSelectedYear(parseInt(value ?? "2026"))}
                     >
@@ -197,7 +226,8 @@ export default function CollaboratorPage() {
                           {collaboratorData.nome}
                         </h2>
                         <p className="text-muted-foreground">
-                          {collaboratorData.cargo} • {selectedYear}
+                          {collaboratorData.cargo} •{" "}
+                          {selectedMonth ? `${selectedMonth} ${selectedYear}` : selectedYear}
                         </p>
                       </div>
                     </div>
@@ -212,7 +242,7 @@ export default function CollaboratorPage() {
                   <Card className="glass-panel border-0 transition-shadow duration-300 hover:shadow-[0_20px_45px_-20px_var(--primary)]">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
-                        Total Anual
+                        {monthData ? "Total no Mês" : "Total Anual"}
                       </CardTitle>
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-white shadow-md">
                         <BarChart3 className="h-4 w-4" />
@@ -220,10 +250,10 @@ export default function CollaboratorPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-3xl font-bold tracking-tight">
-                        {formatNumber(collaboratorData.totalAnual.total)}
+                        {formatNumber(monthData ? monthData.total : collaboratorData.totalAnual.total)}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1.5">
-                        atividades no ano
+                        {monthData ? `atividades em ${selectedMonth}` : "atividades no ano"}
                       </p>
                     </CardContent>
                   </Card>
@@ -241,12 +271,12 @@ export default function CollaboratorPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
-                        {formatNumber(collaboratorData.totalAnual.emDia)}
+                        {formatNumber(monthData ? monthData.emDia : collaboratorData.totalAnual.emDia)}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1.5">
                         {formatPercent(
-                          (collaboratorData.totalAnual.emDia /
-                            collaboratorData.totalAnual.total) *
+                          ((monthData ? monthData.emDia : collaboratorData.totalAnual.emDia) /
+                            (monthData ? monthData.total : collaboratorData.totalAnual.total)) *
                             100
                         )}{" "}
                         do total
@@ -267,12 +297,12 @@ export default function CollaboratorPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-3xl font-bold tracking-tight text-red-600 dark:text-red-400">
-                        {formatNumber(collaboratorData.totalAnual.atraso)}
+                        {formatNumber(monthData ? monthData.atraso : collaboratorData.totalAnual.atraso)}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1.5">
                         {formatPercent(
-                          (collaboratorData.totalAnual.atraso /
-                            collaboratorData.totalAnual.total) *
+                          ((monthData ? monthData.atraso : collaboratorData.totalAnual.atraso) /
+                            (monthData ? monthData.total : collaboratorData.totalAnual.total)) *
                             100
                         )}{" "}
                         do total
@@ -285,7 +315,7 @@ export default function CollaboratorPage() {
                   <Card className="glass-panel border-0 transition-shadow duration-300 hover:shadow-[0_20px_45px_-20px_var(--primary)]">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium text-muted-foreground">
-                        Performance Média
+                        {monthData ? "Performance" : "Performance Média"}
                       </CardTitle>
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-white shadow-md">
                         <Target className="h-4 w-4" />
@@ -293,7 +323,9 @@ export default function CollaboratorPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-3xl font-bold tracking-tight">
-                        {formatPercent(collaboratorData.totalAnual.mediaPerformance)}
+                        {formatPercent(
+                          monthData ? monthData.performance : collaboratorData.totalAnual.mediaPerformance
+                        )}
                       </div>
                       <p className="text-xs text-muted-foreground mt-1.5">
                         Meta: 70%
@@ -301,12 +333,12 @@ export default function CollaboratorPage() {
                       <Badge
                         className={cn(
                           "mt-2 border-0 text-white shadow-sm",
-                          collaboratorData.totalAnual.mediaPerformance >= 70
+                          (monthData ? monthData.performance : collaboratorData.totalAnual.mediaPerformance) >= 70
                             ? "bg-gradient-success"
                             : "bg-gradient-danger"
                         )}
                       >
-                        {collaboratorData.totalAnual.mediaPerformance >= 70
+                        {(monthData ? monthData.performance : collaboratorData.totalAnual.mediaPerformance) >= 70
                           ? "Acima da Meta"
                           : "Abaixo da Meta"}
                       </Badge>
@@ -459,7 +491,10 @@ export default function CollaboratorPage() {
                           {collaboratorData.dadosMensais.map((mes) => (
                             <tr
                               key={mes.mes}
-                              className="border-b border-foreground/[0.06] transition-colors hover:bg-foreground/[0.03]"
+                              className={cn(
+                                "border-b border-foreground/[0.06] transition-colors hover:bg-foreground/[0.03]",
+                                selectedMonth === mes.mes && "bg-primary/10 hover:bg-primary/15"
+                              )}
                             >
                               <td className="py-3 px-4 font-medium">{mes.mes}</td>
                               <td className="py-3 px-4 text-center text-emerald-600 dark:text-emerald-400">

@@ -37,3 +37,15 @@ export interface DashboardFilters {
   ano?: number;
   cliente?: string;
 }
+
+export interface ProductivityData {
+  mes: string;
+  ano: number;
+  colaborador: string;
+  qtdClientes: number;
+  qtdProjetos: number;
+  qtdAtividades: number;
+  qtdEtapas: number;
+  totalHoras: number; // horas em decimal (ex.: 90.97)
+  totalHorasLabel: string; // rótulo legível (ex.: "90h58")
+}

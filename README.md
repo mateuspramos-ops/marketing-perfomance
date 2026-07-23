@@ -59,10 +59,22 @@ Os dados são recarregados automaticamente a cada 60 segundos no navegador (e o 
 4. Deploy. A cada `git push` na branch principal, a Vercel publica a versão nova automaticamente.
 5. Compartilhe a URL gerada (ou configure um domínio próprio em **Settings → Domains**) com a cliente.
 
+## Aba de Produtividade (segunda aba da planilha)
+
+A página **Produtividade** usa uma segunda aba da planilha, com métricas de volume de trabalho e horas:
+
+```
+Mês, Ano, Colaborador, Qtd_Clientes, Qtd_Projetos, Qtd_Atividades, Qtd_Etapas, Total_Horas_HHMM
+```
+
+- `Total_Horas_HHMM`: horas acumuladas no formato `HH:MM:SS` (ex.: `90:58:00`). O dashboard converte e soma automaticamente.
+- Por padrão, essa página lê a mesma planilha do `GOOGLE_SHEET_CSV_URL`, apenas trocando o `gid` para a aba de produtividade. Se sua aba tiver outro `gid`, defina `GOOGLE_SHEET_PRODUCTIVITY_CSV_URL` com a URL CSV dela (mesmo esquema `.../export?format=csv&gid=SEU_GID`).
+
 ## Estrutura
 
 - `src/app/page.tsx` — painel geral (KPIs, gráficos, tabela do time).
+- `src/app/produtividade/page.tsx` — volume de trabalho e horas por colaborador.
 - `src/app/colaborador/page.tsx` — perfil individual de colaborador.
 - `src/app/relatorio/page.tsx` — ficha de avaliação para impressão/PDF.
-- `src/app/api/performance/route.ts` — lê e normaliza os dados da planilha.
-- `src/lib/sheet-source.ts` — parsing do CSV e fallback para dados de demonstração.
+- `src/app/api/performance/route.ts` e `src/app/api/productivity/route.ts` — leem e normalizam os dados das duas abas da planilha.
+- `src/lib/sheet-source.ts` / `src/lib/productivity-source.ts` — parsing do CSV e fallback para dados de demonstração.

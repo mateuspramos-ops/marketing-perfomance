@@ -1,5 +1,5 @@
 // Identidade visual por cliente final da agência: cor de marca, logo e cor de
-// fundo do logo. Compartilhado entre a página de Clientes e a de Campanhas.
+// fundo do logo.
 
 export interface ClientBrand {
   match: RegExp;

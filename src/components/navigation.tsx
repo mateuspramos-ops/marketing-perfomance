@@ -10,6 +10,7 @@ import {
   FileText,
   Sparkles,
   Building2,
+  Megaphone,
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +18,11 @@ const navItems = [
     label: "Dashboard",
     href: "/",
     icon: LayoutDashboard,
+  },
+  {
+    label: "Campanhas",
+    href: "/campanhas",
+    icon: Megaphone,
   },
   {
     label: "Clientes",

@@ -74,12 +74,36 @@ Mês, Ano, Cliente, Projetos, Atividades, Etapas, Total de tempo
 - `Total de tempo`: horas acumuladas no formato `HH:MM:SS` (ex.: `81:11:35`). O dashboard converte e soma automaticamente.
 - Override opcional: `GOOGLE_SHEET_CLIENTS_CSV_URL`.
 
+## Campanhas (Meta Ads + Google Ads)
+
+A página **Campanhas** (`/campanhas`) mostra investimento, impressões, cliques, CTR, conversões e CPA consolidados de Meta Ads e Google Ads. **Hoje ela roda só com dados de demonstração** — a integração real com as APIs de anúncios ainda não foi implementada, porque depende de credenciais que só a agência/cliente pode gerar:
+
+- **Meta Ads**: criar um app em [developers.facebook.com](https://developers.facebook.com), solicitar acesso à Marketing API e gerar um token de acesso de longa duração para a conta de anúncios.
+- **Google Ads**: solicitar um Developer Token na conta Google Ads (aprovação da própria Google) e configurar OAuth (client id/secret + refresh token) vinculado à conta de anúncios.
+
+Quando essas credenciais existirem, defina as variáveis de ambiente:
+
+```bash
+META_ADS_ACCESS_TOKEN=
+META_ADS_ACCOUNT_ID=
+GOOGLE_ADS_DEVELOPER_TOKEN=
+GOOGLE_ADS_CLIENT_ID=
+GOOGLE_ADS_CLIENT_SECRET=
+GOOGLE_ADS_REFRESH_TOKEN=
+GOOGLE_ADS_CUSTOMER_ID=
+```
+
+E implemente as chamadas reais em `fetchMetaAdsData()` / `fetchGoogleAdsData()` dentro de [`src/lib/ads-source.ts`](src/lib/ads-source.ts) — o restante do pipeline (rota `/api/campaigns`, hook, página) já está pronto para consumir o formato `CampaignData[]` sem mais mudanças.
+
 ## Estrutura
 
 - `src/app/page.tsx` — painel geral (KPIs, gráficos, tabela do time).
+- `src/app/campanhas/page.tsx` — investimento e performance de Meta Ads / Google Ads.
 - `src/app/clientes/page.tsx` — projetos, atividades e horas por cliente.
 - `src/app/colaborador/page.tsx` — perfil individual de colaborador.
 - `src/app/relatorio/page.tsx` — ficha de avaliação para impressão/PDF.
-- `src/app/api/*/route.ts` — leem e normalizam os dados das abas da planilha.
-- `src/lib/*-source.ts` — parsing do CSV e fallback para dados de demonstração.
+- `src/app/api/*/route.ts` — leem e normalizam os dados das abas da planilha e das campanhas.
+- `src/lib/*-source.ts` — parsing/fetch e fallback para dados de demonstração.
+- `src/lib/ads-service.ts` — agregações de campanhas (por dia, por plataforma, por campanha).
+- `src/lib/client-brands.ts` — cor/logo por cliente final, compartilhado entre Clientes e Campanhas.
 - `src/lib/horas.ts` — conversão do formato de horas `HH:MM:SS`.

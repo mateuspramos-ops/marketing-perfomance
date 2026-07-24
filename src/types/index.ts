@@ -48,3 +48,18 @@ export interface ClientProjectData {
   totalHoras: number; // horas em decimal
   totalHorasLabel: string; // rótulo legível (ex.: "81h11")
 }
+
+export type AdPlatform = "Meta Ads" | "Google Ads";
+
+export interface CampaignData {
+  data: string; // ISO date (YYYY-MM-DD), um registro por campanha por dia
+  plataforma: AdPlatform;
+  campanha: string;
+  cliente: string;
+  investimento: number; // R$
+  impressoes: number;
+  cliques: number;
+  conversoes: number;
+  // ctr, cpc e cpa são derivados de impressões/cliques/investimento/conversões
+  // pelo lib/ads-service.ts — não precisam ser fornecidos pela fonte de dados.
+}
